@@ -32,13 +32,7 @@ def Make_Training_Operation(Local_net, Global_net):
 
     return Global_net.trainer1.apply_gradients(l_grads_g_vars, global_step=tf.compat.v1.train.get_global_step()),Global_net.trainer2.apply_gradients(v_l_grads_g_vars, global_step=tf.compat.v1.train.get_global_step())
 
-def V_Make_Training_Operation(Local_net, Global_net):
-    vLocal_grads, _ = zip(*Local_net.v_grads_and_vars)
-    vLocal_grads, _ = tf.clip_by_global_norm(vLocal_grads, 5.0)
-    _, vGlobal_vars = zip(*Global_net.v_grads_and_vars)
-    v_l_grads_g_vars = list(zip(vLocal_grads, vGlobal_vars))
 
-    return Global_net.trainer2.apply_gradients(v_l_grads_g_vars, global_step=tf.compat.v1.train.get_global_step())
 #A tuple of one step
 class Batch:
     def __init__(self, state, action, reward, next_state, done,value):
@@ -54,7 +48,7 @@ class Preprocesing_Input:
         with tf.compat.v1.variable_scope("Image_Transformer"):
             self.input_image = tf.compat.v1.placeholder(shape=[210, 160, 3], dtype=tf.uint8)
             self.output_image = tf.image.rgb_to_grayscale(self.input_image)
-            self.output_image = tf.image.crop_to_bounding_box(self.output_image, 34, 0, 160, 160)
+            #self.output_image = tf.image.crop_to_bounding_box(self.output_image, 34, 0, 160, 160)
             self.output_image = tf.image.resize(self.output_image, [84, 84], method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
             self.output_image = tf.squeeze(self.output_image)
     def transfrom(self, state, sess=None):
