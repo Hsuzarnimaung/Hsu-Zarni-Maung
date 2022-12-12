@@ -32,15 +32,8 @@ class Network():
             self.actions = Input(shape=[], dtype=tf.int32, name="actions")
             self.targets = Input(shape=[], dtype=tf.float32, name="target")
             with tf.compat.v1.variable_scope("network"):
-                input = tf.compat.v1.to_float(self.states) / 255.0
-                # conv1=(input)
-                conv1 = layers.Conv2D(16, 8, 4, activation="relu", name="conv1")(input)
-                conv2 = layers.Conv2D(32, 4, 2, activation="relu", name="conv2")(conv1)
-                flat = layers.Flatten()(conv2)
-                fully_connected = layers.Dense(256, activation="relu", name='fully')(flat)
-                lstm = LSTMCell(256)
-                lstm, (self.ht, self.ct) = lstm(fully_connected, states=[self.ht, self.ct])
-            # lstm, self.ht, self.ct = Model(self.states, self.ht, self.ct)
+                
+                lstm, self.ht, self.ct = Model(self.states, self.ht, self.ct)
             with tf.compat.v1.variable_scope("policy_network"):
                 # self.trainer1 = trainer
                 self.output = layers.Dense(self.num_of_output, activation=None, name="policy")(lstm)
